@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Traitors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: rgb(3, 0, 17);
+            background-image: url(background.jpg);
+            background-position: bottom;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-blend-mode: normal;
+        }
+
+        h1 {
+            font-size: 400%;
+            color: rgb(235, 190, 235);
+            font-family: "Rowdies", sans-serif;
+            font-weight: 900;
+            font-style: normal;
+            text-align: center;
+            margin: 40px 0px 20px 0px;
+        }
+
+        h2 {
+            font-size: 500%;
+            color: rgb(189, 101, 189);
+            font-family: "Indie Flower", cursive;
+            font-weight: 400;
+            font-style: normal;
+            text-align: center;
+            margin: 0px;
+        }
+
+        .flex-container {
+            padding: 2% 0 0 0;
+            display: flex;
+            flex-flow: row wrap;
+        }
+
+        .flex-item {
+            padding: 10px;
+            flex: 1 1 100px;
+            text-align: center;
+        }
+
+        .name {
+            font-size: 150%;
+            color: rgb(235, 190, 235);
+            font-family: "Roboto", sans-serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        .player {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .player.alive > .avatar > .skull {
+            display: none;
+        }
+
+        .player.dead > .avatar > .skull {
+            display: block;
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            top: 10px;
+            z-index: 999;
+            left: 10px;
+            color: white;
+        }
+
+        .player > .avatar > img {
+            height: 150px;
+            object-fit: contain;
+            border-radius: 100%;
+            /*padding: 12px 8px 4px 8px;*/
+        }
+
+        .player > .avatar { 
+            border-radius: 100%;
+            flex: 20%;
+            transition: all 0.3s ease;
+            margin: 0px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .player > .avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .player.dead > .avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .player.alive > .avatar { 
+            background: transparent;
+        }
+
+        .player.dead > .avatar { 
+            background: red;
+        }
+
+        .player.alive > .avatar > img { 
+            border: 5px solid transparent;
+            mix-blend-mode: normal;
+            padding: 10px;
+        }
+
+        .player.dead > .avatar > img { 
+            border: 5px solid red;
+            mix-blend-mode: multiply;
+            padding: 10px 10px 5px 10px;
+        }
+
+        .player.dead > .name {
+            padding: 5px 0 0 0;
+        }
+
+        .flex-item.banner {
+            display: block;
+            position: absolute;
+            top: 20px;
+            text-align: center;
+        }
+
+        /* Responsive layout - makes a one column layout instead of a two-column layout */
+        @media (max-width: 800px) {
+            .flex-item {
+                flex: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <div id="app">
+        <div class="flex-container">
+            <div class="flex-item" v-on:click="togglePlayer(player)" v-for="player in players">
+                <div class="player" :class="player.status">
+                    <div class="avatar">
+                        <svg class="skull" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#FFFFFF" d="M416 398.9c58.5-41.1 96-104.1 96-174.9C512 100.3 397.4 0 256 0S0 100.3 0 224c0 70.7 37.5 133.8 96 174.9c0 .4 0 .7 0 1.1v64c0 26.5 21.5 48 48 48h48V464c0-8.8 7.2-16 16-16s16 7.2 16 16v48h64V464c0-8.8 7.2-16 16-16s16 7.2 16 16v48h48c26.5 0 48-21.5 48-48V400c0-.4 0-.7 0-1.1zM96 256a64 64 0 1 1 128 0A64 64 0 1 1 96 256zm256-64a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>
+                        <!--<span class="status">DEAD</span>-->
+                        <img :src="player.image" :alt="player.name" />
+                    </div>
+                    <div class="name">{{player.name}}</div>
+                </div>
+            </div>
+        </div>
+        <h1>FARMHOUSE 2024</h1>
+        <h2>TRAITORS</h2>
+    </div>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    players: [
+                        { name: "Bobby", status: "alive", image: "bobby.jpg" },
+                        { name: "Laura", status: "alive", image: "laura.jpg" },
+                        { name: "Kevin W.", status: "alive", image: "kevin_w.jpg" },
+                        { name: "Lexi", status: "alive", image: "lexi.jpg" },
+                        { name: "Grayson", status: "alive", image: "grayson.jpg" },
+                        { name: "Ingrid", status: "alive", image: "ingrid.jpg" },
+                        { name: "Adam", status: "alive", image: "adam.png" },
+                        { name: "Randle", status: "alive", image: "randle.jpg" },
+                        { name: "Stephanie", status: "alive", image: "stephanie.png" },
+                        { name: "Charles", status: "alive", image: "charles.jpg" },
+                        { name: "Kevin O.", status: "alive", image: "kevin_o.png" },
+                        { name: "Jesse", status: "alive", image: "jesse.jpg" },
+                        { name: "Angela", status: "alive", image: "angela.jpg" },
+                        { name: "Brandon", status: "alive", image: "brandon.jpg" },
+                        { name: "Alex C.", status: "alive", image: "alex_c.jpg" },
+                        { name: "Alex G.", status: "alive", image: "alex_g.jpg" }
+                    ]
+                }
+            },
+            created() {
+                let urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('s')) {
+                    b64status = urlParams.get('s');
+                    json = atob(b64status);
+                    this.players = JSON.parse(json);
+                }
+            },
+            methods: {
+                togglePlayer: function(player) {
+                    if (player.status === "alive") {
+                        player.status = "dead";
+                    } else {
+                        player.status = "alive";
+                    } 
+                    console.debug("Player '" + player.name + "' has been eliminated");
+                    this.saveStatuses();
+                },
+                saveStatuses: function() {
+                    json = JSON.stringify(this.players);
+                    b64status = btoa(json);
+
+                    if ('URLSearchParams' in window) {
+                        const url = new URL(window.location)
+                        url.searchParams.set('s', b64status)
+                        history.pushState(null, '', url);
+                    }
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
