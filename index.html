@@ -12,7 +12,7 @@
     <style>
         body {
             background: rgb(3, 0, 17);
-            background-image: url(background.jpg);
+            background-image: url("images/background.jpg");
             background-position: bottom;
             background-repeat: no-repeat;
             background-size: 100vw 100vh;
@@ -84,7 +84,6 @@
             height: 150px;
             object-fit: contain;
             border-radius: 100%;
-            /*padding: 12px 8px 4px 8px;*/
         }
 
         .player > .avatar { 
@@ -156,7 +155,6 @@
                 <div class="player" :class="player.status">
                     <div class="avatar">
                         <svg class="skull" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#FFFFFF" d="M416 398.9c58.5-41.1 96-104.1 96-174.9C512 100.3 397.4 0 256 0S0 100.3 0 224c0 70.7 37.5 133.8 96 174.9c0 .4 0 .7 0 1.1v64c0 26.5 21.5 48 48 48h48V464c0-8.8 7.2-16 16-16s16 7.2 16 16v48h64V464c0-8.8 7.2-16 16-16s16 7.2 16 16v48h48c26.5 0 48-21.5 48-48V400c0-.4 0-.7 0-1.1zM96 256a64 64 0 1 1 128 0A64 64 0 1 1 96 256zm256-64a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>
-                        <!--<span class="status">DEAD</span>-->
                         <img :src="player.image" :alt="player.name" />
                     </div>
                     <div class="name">{{player.name}}</div>
@@ -172,22 +170,22 @@
             data() {
                 return {
                     players: [
-                        { name: "Bobby", status: "alive", image: "bobby.jpg" },
-                        { name: "Laura", status: "alive", image: "laura.jpg" },
-                        { name: "Kevin W.", status: "alive", image: "kevin_w.jpg" },
-                        { name: "Lexi", status: "alive", image: "lexi.jpg" },
-                        { name: "Grayson", status: "alive", image: "grayson.jpg" },
-                        { name: "Ingrid", status: "alive", image: "ingrid.jpg" },
-                        { name: "Adam", status: "alive", image: "adam.png" },
-                        { name: "Randle", status: "alive", image: "randle.jpg" },
-                        { name: "Stephanie", status: "alive", image: "stephanie.png" },
-                        { name: "Charles", status: "alive", image: "charles.jpg" },
-                        { name: "Kevin O.", status: "alive", image: "kevin_o.png" },
-                        { name: "Jesse", status: "alive", image: "jesse.jpg" },
-                        { name: "Angela", status: "alive", image: "angela.jpg" },
-                        { name: "Brandon", status: "alive", image: "brandon.jpg" },
-                        { name: "Alex C.", status: "alive", image: "alex_c.jpg" },
-                        { name: "Alex G.", status: "alive", image: "alex_g.jpg" }
+                        { name: "Bobby", gender: "male", status: "alive", image: "images/bobby.jpg" },
+                        { name: "Laura", gender: "female", status: "alive", image: "images/laura.jpg" },
+                        { name: "Kevin W.", gender: "male", status: "alive", image: "images/kevin_w.jpg" },
+                        { name: "Lexi", gender: "female", status: "alive", image: "images/lexi.jpg" },
+                        { name: "Grayson", gender: "male", status: "alive", image: "images/grayson.jpg" },
+                        { name: "Ingrid", gender: "female", status: "alive", image: "images/ingrid.jpg" },
+                        { name: "Adam", gender: "male", status: "alive", image: "images/adam.png" },
+                        { name: "Randle", gender: "male", status: "alive", image: "images/randle.jpg" },
+                        { name: "Stephanie", gender: "female", status: "alive", image: "images/stephanie.png" },
+                        { name: "Charles", gender: "male", status: "alive", image: "images/charles.jpg" },
+                        { name: "Kevin O.", gender: "male", status: "alive", image: "images/kevin_o.png" },
+                        { name: "Jesse", gender: "male", status: "alive", image: "images/jesse.jpg" },
+                        { name: "Angela", gender: "female", status: "alive", image: "images/angela.jpg" },
+                        { name: "Brandon", gender: "male", status: "alive", image: "images/brandon.jpg" },
+                        { name: "Alex C.", gender: "male", status: "alive", image: "images/alex_c.jpg" },
+                        { name: "Alex G.", gender: "female", status: "alive", image: "images/alex_g.jpg" }
                     ]
                 }
             },
@@ -203,6 +201,7 @@
                 togglePlayer: function(player) {
                     if (player.status === "alive") {
                         player.status = "dead";
+                        this.playAudio(player);
                     } else {
                         player.status = "alive";
                     } 
@@ -214,10 +213,22 @@
                     b64status = btoa(json);
 
                     if ('URLSearchParams' in window) {
-                        const url = new URL(window.location)
-                        url.searchParams.set('s', b64status)
+                        const url = new URL(window.location);
+                        url.searchParams.set('s', b64status);
                         history.pushState(null, '', url);
                     }
+                },
+                playAudio: function(player) {
+                    var audio = null
+                    if (player.gender === "male") {
+                        audio = new Audio("audio/male.mp3");
+                    } else if (player.gender === "female") {
+                        audio = new Audio("audio/female.mp3");
+                    }
+                    audio.play()
+
+                    audio = new Audio("audio/shot.mp3")
+                    audio.play()
                 }
             }
         }).mount('#app')
