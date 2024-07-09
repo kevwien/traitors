@@ -234,6 +234,8 @@
                 encodeURL: function() {
                     // Encode player statuses into binary, then convert to hex, then inject into URL
                     var binaryString = "";
+                    var hexString = "";
+
                     this.players.forEach(player => {
                         if (player.status === "alive") {
                             binaryString += "1";
@@ -242,16 +244,26 @@
                         }
                     });
 
-                    var hexString = parseInt(binaryString, 2).toString(16);
+                    var bytes = binaryString.match(/.{1,8}/g);
+                    bytes.forEach(byte => {
+                        hexString += parseInt(byte, 2).toString(16).padStart(2, '0');
+                    });
+                    
                     if ('URLSearchParams' in window) {
                         const url = new URL(window.location);
                         url.searchParams.set("s", hexString);
                         history.pushState(null, "", url);
                     }
                 },
-                decodeURL: function(encodedURL) {
-                    // Decode URL from hex into into binary, then use bits to set player statuses
-                    binaryString = (parseInt(encodedURL, 16).toString(2)).padStart(8, '0');
+                decodeURL: function(hexString) {
+                    // Decode URL as hex into binary, then use bits to set player statuses
+                    var binaryString = "";
+                    var hexDigits = hexString.match(/.{1,2}/g);
+
+                    hexDigits.forEach(hex => {
+                        binaryString += (parseInt(hex, 16).toString(2)).padStart(8, '0');
+                    });
+                    
                     for (var i = 0; i < binaryString.length; i++) {
                         if (binaryString[i] === "1") {
                             this.players[i].status = "alive";
