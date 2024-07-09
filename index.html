@@ -191,10 +191,9 @@
             },
             created() {
                 let urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('s')) {
-                    b64status = urlParams.get('s');
-                    json = atob(b64status);
-                    this.players = JSON.parse(json);
+                if (urlParams.has("s")) {
+                    param = urlParams.get("s");
+                    this.decodeURL(param);
                 }
             },
             methods: {
@@ -202,21 +201,13 @@
                     if (player.status === "alive") {
                         player.status = "dead";
                         this.playAudio(player);
+                        console.debug("Player '" + player.name + "' has been eliminated");
                     } else {
                         player.status = "alive";
+                        console.debug("Player '" + player.name + "' has been brought back to life");
                     } 
-                    console.debug("Player '" + player.name + "' has been eliminated");
-                    this.saveStatuses();
-                },
-                saveStatuses: function() {
-                    json = JSON.stringify(this.players);
-                    b64status = btoa(json);
-
-                    if ('URLSearchParams' in window) {
-                        const url = new URL(window.location);
-                        url.searchParams.set('s', b64status);
-                        history.pushState(null, '', url);
-                    }
+                    
+                    this.encodeURL();
                 },
                 playAudio: function(player) {
                     var audio = null
@@ -225,10 +216,39 @@
                     } else if (player.gender === "female") {
                         audio = new Audio("audio/female.mp3");
                     }
-                    audio.play()
+                    audio.play();
 
-                    audio = new Audio("audio/shot.mp3")
-                    audio.play()
+                    audio = new Audio("audio/shot.mp3");
+                    audio.play();
+                },
+                encodeURL: function() {
+                    // Encode player statuses into binary, then convert to hex, then inject into URL
+                    var binaryString = "";
+                    this.players.forEach(player => {
+                        if (player.status === "alive") {
+                            binaryString += "1";
+                        } else {
+                            binaryString += "0";
+                        }
+                    });
+
+                    var hexString = parseInt(binaryString, 2).toString(16);
+                    if ('URLSearchParams' in window) {
+                        const url = new URL(window.location);
+                        url.searchParams.set("s", hexString);
+                        history.pushState(null, "", url);
+                    }
+                },
+                decodeURL: function(encodedURL) {
+                    // Decode URL from hex into into binary, then use bits to set player statuses
+                    binaryString = (parseInt(encodedURL, 16).toString(2)).padStart(8, '0');
+                    for (var i = 0; i < binaryString.length; i++) {
+                        if (binaryString[i] === "1") {
+                            this.players[i].status = "alive";
+                        } else {
+                            this.players[i].status = "dead";
+                        }
+                    }
                 }
             }
         }).mount('#app')
