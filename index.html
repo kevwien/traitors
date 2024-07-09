@@ -200,16 +200,17 @@
                 togglePlayer: function(player) {
                     if (player.status === "alive") {
                         player.status = "dead";
-                        this.playAudio(player);
+                        this.playKillAudio(player);
                         console.debug("Player '" + player.name + "' has been eliminated");
                     } else {
                         player.status = "alive";
+                        this.playReviveAudio(player);
                         console.debug("Player '" + player.name + "' has been brought back to life");
                     } 
                     
                     this.encodeURL();
                 },
-                playAudio: function(player) {
+                playKillAudio: function(player) {
                     var audio = null
                     if (player.gender === "male") {
                         audio = new Audio("audio/male.mp3");
@@ -219,6 +220,15 @@
                     audio.play();
 
                     audio = new Audio("audio/shot.mp3");
+                    audio.play();
+                },
+                playReviveAudio: function(player) {
+                    var audio = null
+                    if (player.gender === "male") {
+                        audio = new Audio("audio/male-revive.wav");
+                    } else if (player.gender === "female") {
+                        audio = new Audio("audio/female-revive.wav");
+                    }
                     audio.play();
                 },
                 encodeURL: function() {
