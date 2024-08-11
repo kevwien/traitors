@@ -293,7 +293,6 @@
                 return {
                     players: [
                         { name: "Bobby", gender: "male", status: "alive", image: "images/bobby.jpg" },
-                        { name: "Laura", gender: "female", status: "alive", image: "images/laura.jpg" },
                         { name: "Kevin W.", gender: "male", status: "alive", image: "images/kevin_w.jpg" },
                         { name: "Lexi", gender: "female", status: "alive", image: "images/lexi.jpg" },
                         { name: "Grayson", gender: "male", status: "alive", image: "images/grayson.jpg" },
@@ -398,6 +397,7 @@
 
                     var bytes = binaryString.match(/.{1,8}/g);
                     bytes.forEach(byte => {
+                        byte = byte.padEnd(8, "1"); // Pad to account for players not multiple of 8
                         hexString += parseInt(byte, 2).toString(16).padStart(2, "0");
                     });
                     
@@ -416,7 +416,7 @@
                         binaryString += (parseInt(hex, 16).toString(2)).padStart(8, "0");
                     });
                     
-                    for (var i = 0; i < binaryString.length; i++) {
+                    for (var i = 0; i < this.players.length; i++) {
                         if (binaryString[i] === "1") {
                             this.players[i].status = "alive";
                         } else {
